@@ -1,0 +1,104 @@
+# ATM Interface in Python with Deposit and Withdrawal Functionality
+
+class ATM:
+    # Initialize the ATM with a balance (default is 0.0) and a pin
+    def __init__(self, balance=0.0):
+        self.balance = balance  # Stores the balance in the ATM account
+        self.pin = None  # No PIN is set initially
+
+    # Function to create a 4-digit security PIN
+    def create_pin(self):
+        while True:
+            pin = input("Set a 4-digit security PIN: ")
+            # Check if the PIN is exactly 4 digits and is numeric
+            if len(pin) == 4 and pin.isdigit():
+                self.pin = pin
+                print("PIN set successfully!")
+                break
+            else:
+                print("Invalid PIN. Please enter a valid 4-digit number.")
+
+    # Function to validate the entered PIN with the stored PIN
+    def validate_pin(self):
+        attempts = 3  # The user has 3 attempts to enter the correct PIN
+        while attempts > 0:
+            entered_pin = input("Enter your 4-digit security PIN: ")
+            # If the entered PIN matches the stored PIN, access is granted
+            if entered_pin == self.pin:
+                print("PIN verified!")
+                return True
+            else:
+                attempts -= 1  # Decrease the number of attempts left
+                print(f"Incorrect PIN. You have {attempts} attempt(s) left.")
+        # If the attempts run out, the function will terminate
+        print("Too many incorrect attempts. Exiting.")
+        return False
+
+    # Function to check the account balance
+    def check_balance(self):
+        print(f"Your current balance is: ₹{self.balance:.2f}")  # Display balance with two decimal places
+
+    # Function to deposit money into the account
+    def deposit(self):
+        if self.validate_pin():  # Validate PIN before allowing deposit
+            while True:
+                try:
+                    amount = float(input("Enter the amount to deposit: ₹"))
+                    # Only allow deposits greater than 0
+                    if amount <= 0:
+                        print("Please enter an amount greater than 0.")
+                    else:
+                        self.balance += amount  # Add the amount to the balance
+                        print(f"₹{amount:.2f} deposited successfully!")
+                        self.check_balance()  # Show the updated balance
+                        break
+                except ValueError:
+                    print("Invalid input. Please enter a valid amount.")  # Handle invalid input
+
+    # Function to withdraw money from the account
+    def withdraw(self):
+        if self.validate_pin():  # Validate PIN before allowing withdrawal
+            while True:
+                try:
+                    amount = float(input("Enter the amount to withdraw: ₹"))
+                    # Check if the withdrawal amount is valid
+                    if amount <= 0:
+                        print("Please enter an amount greater than 0.")
+                    elif amount > self.balance:
+                        print("Insufficient balance!")  # Prevent overdraft
+                    else:
+                        self.balance -= amount  # Subtract the amount from the balance
+                        print(f"₹{amount:.2f} withdrawn successfully!")
+                        self.check_balance()  # Show the updated balance
+                        break
+                except ValueError:
+                    print("Invalid input. Please enter a valid amount.")  # Handle invalid input
+
+    # ATM menu to choose various operations
+    def atm_menu(self):
+        while True:
+            print("\nATM Menu:")
+            print("1. Check Balance")
+            print("2. Deposit Money")
+            print("3. Withdraw Money")
+            print("4. Exit")
+            choice = input("Choose an option: ")
+
+            # Perform actions based on the user's choice
+            if choice == '1':
+                self.check_balance()  # Show balance
+            elif choice == '2':
+                self.deposit()  # Deposit money
+            elif choice == '3':
+                self.withdraw()  # Withdraw money
+            elif choice == '4':
+                print("Thank you for using our ATM service. Goodbye!")
+                break  # Exit the program
+            else:
+                print("Invalid option. Please try again.")  # Handle invalid choices
+
+# Driver Code
+# Instantiate an ATM object and run the application
+atm = ATM()
+atm.create_pin()  # Set up the initial PIN
+atm.atm_menu()    # Start the ATM menu
